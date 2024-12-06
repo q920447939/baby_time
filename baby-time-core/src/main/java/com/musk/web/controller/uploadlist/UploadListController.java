@@ -55,6 +55,16 @@ public class UploadListController {
     @Resource
     private UploadListService uploadListService;
 
+
+    @Resource
+    private MemberService memberService;
+
+
+    @Resource
+    private UploadDiscussService uploadDiscussService;
+
+
+
     private static final Map<Short,Class<? extends  UploadTypeLoadStrategy>> UPLOAD_TYPE_LOAD_STRATEGY_MAP  = new HashMap<>();
     static {
         UPLOAD_TYPE_LOAD_STRATEGY_MAP.put((short) 1, ImageUploadTypeLoadStrategyImpl.class);
@@ -95,13 +105,6 @@ public class UploadListController {
         return success(BeanUtils.toBean(uploadList, UploadListRespVO.class));
     }
 
-
-    @Resource
-    private MemberService memberService;
-
-
-    @Resource
-    private UploadDiscussService uploadDiscussService;
 
     /**
      * 获得上传记录分页

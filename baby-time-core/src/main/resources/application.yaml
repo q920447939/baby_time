@@ -135,7 +135,7 @@ sa-token:
 
 
 musk:
-  frame:
+  framework:
     middleware:
       mybatis:
         plus:
@@ -144,5 +144,7 @@ musk:
     tenant:
       enable: true
       config-default-tenant-id: 1
+      ignore-tables:
+        - baby_height_record_standard
   auth:
     default-avatar-url: 'http://www.baidu.image.com'

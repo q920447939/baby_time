@@ -6,19 +6,17 @@ import com.musk.web.controller.family.vo.FamilySaveReqVO;
 import com.musk.web.dal.dataobject.family.FamilyDO;
 import com.musk.web.dal.dataobject.family.bo.FamilyPageReqBO;
 import com.musk.web.dal.mysql.family.FamilyMapper;
+import com.musk.web.event.familyMember.entity.FamilyMemberEventInfo;
 import com.musk.web.exception.BusinessExceptionEnum;
 import org.example.musk.common.exception.BusinessException;
 import org.example.musk.common.pojo.db.PageResult;
 import org.example.musk.common.util.object.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
-import com.baomidou.dynamic.datasource.annotation.DS;
 
 
 /**
@@ -33,6 +31,8 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
 
     @Resource
     private FamilyMapper familyMapper;
+    @Resource
+    private ApplicationContext applicationContext;
 
     @Override
     public Integer createFamily(FamilySaveReqVO createReqVO) {
@@ -44,6 +44,8 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
         if (exists) {
             throw new BusinessException(BusinessExceptionEnum.FAMILY_IS_EXISTS);
         }
+
+        applicationContext.publishEvent(FamilyMemberEventInfo.builder().familyId(family.getId()).memberId(family.getCreateId()).build());
         // 返回
         return family.getId();
     }
@@ -63,6 +65,7 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
         validateFamilyExists(id);
         // 删除
         familyMapper.deleteById(id);
+        this.baseMapper.deleteById(id);
     }
 
     private void validateFamilyExists(Integer id) {
@@ -71,6 +74,7 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
             throw exception(FAMILY_NOT_EXISTS);
         }
         */
+
     }
 
     @Override
