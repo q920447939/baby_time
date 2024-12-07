@@ -36,10 +36,16 @@ spring:
 
 musk:
   auth:
-    ds:
-      member: baby_time
-      log:  baby_time_log
-      statistics:  baby_time_statistics
+    default-avatar-url: 'http://www.baidu.image.com'
+  plugin:
+    service:
+      dynamic-source:
+        ds:
+          properties:
+            auth:
+              member: baby_time
+              log: baby_time_log
+              statistics: baby_time_statistics
 business:
   image:
     uploadImagePath: 'C:\tmp\static\image'

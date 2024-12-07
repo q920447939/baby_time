@@ -1,9 +1,7 @@
 package com.musk.web.service.uploadlist;
 
-import java.util.*;
-
 import com.musk.web.controller.uploadlist.vo.UploadListPageReqVO;
-import com.musk.web.controller.uploadlist.vo.UploadListSaveReqVO;
+import com.musk.web.controller.uploadlist.vo.UploadListAddReqVO;
 import com.musk.web.dal.dataobject.uploadlist.UploadListDO;
 import jakarta.validation.*;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -23,14 +21,8 @@ public interface UploadListService extends IService<UploadListDO>{
      * @param createReqVO 创建信息
      * @return 编号
      */
-    Integer createUploadList(@Valid UploadListSaveReqVO createReqVO);
+    Integer createUploadList(@Valid UploadListAddReqVO createReqVO);
 
-    /**
-     * 更新上传记录
-     *
-     * @param updateReqVO 更新信息
-     */
-    void updateUploadList(@Valid UploadListSaveReqVO updateReqVO);
 
     /**
      * 删除上传记录

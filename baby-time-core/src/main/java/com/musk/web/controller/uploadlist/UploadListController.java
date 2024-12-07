@@ -8,7 +8,7 @@ import com.musk.web.controller.uploadimage.vo.UploadImageRespVO;
 import com.musk.web.controller.uploadlist.vo.MemberSimpleResVO;
 import com.musk.web.controller.uploadlist.vo.UploadListPageReqVO;
 import com.musk.web.controller.uploadlist.vo.UploadListRespVO;
-import com.musk.web.controller.uploadlist.vo.UploadListSaveReqVO;
+import com.musk.web.controller.uploadlist.vo.UploadListAddReqVO;
 import com.musk.web.dal.dataobject.uploaddiscuss.UploadDiscussDO;
 import com.musk.web.dal.dataobject.uploadimage.UploadImageDO;
 import com.musk.web.dal.dataobject.uploadlist.UploadListDO;
@@ -19,17 +19,16 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.example.musk.auth.entity.member.MemberDO;
 import org.example.musk.auth.service.core.member.MemberService;
+import org.example.musk.common.context.ThreadLocalTenantContext;
 import org.example.musk.common.pojo.CommonResult;
 import org.example.musk.common.pojo.db.PageResult;
 import org.example.musk.common.util.commonResult.CommonResultUtils;
 import org.example.musk.common.util.object.BeanUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +39,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -74,17 +72,10 @@ public class UploadListController {
      * 创建上传记录
      */
     @PostMapping("/create")
-    public CommonResult<Integer> createUploadList(@Valid @RequestBody UploadListSaveReqVO createReqVO) {
+    public CommonResult<Integer> createUploadList(@Valid @RequestBody UploadListAddReqVO createReqVO) {
+        createReqVO.setUploadUser(ThreadLocalTenantContext.getMemberId());
+        createReqVO.getUploadImageAddReqVO().setUploadId(ThreadLocalTenantContext.getMemberId());
         return success(uploadListService.createUploadList(createReqVO));
-    }
-
-    /**
-     * 更新上传记录
-     */
-    @PutMapping("/update")
-    public CommonResult<Boolean> updateUploadList(@Valid @RequestBody UploadListSaveReqVO updateReqVO) {
-        uploadListService.updateUploadList(updateReqVO);
-        return success(true);
     }
 
     /**

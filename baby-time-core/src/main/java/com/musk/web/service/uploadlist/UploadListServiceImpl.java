@@ -2,22 +2,17 @@ package com.musk.web.service.uploadlist;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.musk.web.controller.uploadlist.vo.UploadListPageReqVO;
-import com.musk.web.controller.uploadlist.vo.UploadListSaveReqVO;
+import com.musk.web.controller.uploadlist.vo.UploadListAddReqVO;
 import com.musk.web.dal.dataobject.uploadlist.UploadListDO;
 import com.musk.web.dal.dataobject.uploadlist.bo.UploadListPageReqBO;
 import com.musk.web.dal.mysql.uploadlist.UploadListMapper;
+import com.musk.web.service.uploadimage.UploadImageService;
 import lombok.extern.slf4j.Slf4j;
 import org.example.musk.common.pojo.db.PageResult;
 import org.example.musk.common.util.object.BeanUtils;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -32,24 +27,22 @@ public class UploadListServiceImpl extends ServiceImpl<UploadListMapper, UploadL
 
     @Resource
     private UploadListMapper uploadListMapper;
+    @Resource
+    private UploadImageService uploadImageService;
 
     @Override
-    public Integer createUploadList(UploadListSaveReqVO createReqVO) {
+    public Integer createUploadList(UploadListAddReqVO createReqVO) {
         // 插入
         UploadListDO uploadList = BeanUtils.toBean(createReqVO, UploadListDO.class);
-        uploadListMapper.insert(uploadList);
+        if (uploadListMapper.insert(uploadList) > 0) {
+            uploadImageService.createUploadImage(createReqVO.getUploadImageAddReqVO());
+            return uploadList.getId();
+        }
         // 返回
         return uploadList.getId();
     }
 
-    @Override
-    public void updateUploadList(UploadListSaveReqVO updateReqVO) {
-        // 校验存在
-        validateUploadListExists(updateReqVO.getId());
-        // 更新
-        UploadListDO updateObj = BeanUtils.toBean(updateReqVO, UploadListDO.class);
-        uploadListMapper.updateById(updateObj);
-    }
+
 
     @Override
     public void deleteUploadList(Integer id) {

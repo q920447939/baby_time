@@ -1,8 +1,8 @@
 package com.musk.web.controller.uploaddiscuss;
 
+import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussAddReqVO;
 import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussPageReqVO;
 import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussRespVO;
-import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussSaveReqVO;
 import com.musk.web.dal.dataobject.uploaddiscuss.UploadDiscussDO;
 import com.musk.web.service.uploaddiscuss.UploadDiscussService;
 import org.example.musk.common.pojo.CommonResult;
@@ -33,18 +33,10 @@ public class UploadDiscussController {
     创建讨论记录
     */
     @PostMapping("/create")
-    public CommonResult<Integer> createUploadDiscuss(@Valid @RequestBody UploadDiscussSaveReqVO createReqVO) {
+    public CommonResult<Integer> createUploadDiscuss(@Valid @RequestBody UploadDiscussAddReqVO createReqVO) {
         return success(uploadDiscussService.createUploadDiscuss(createReqVO));
     }
 
-    /**
-    更新讨论记录
-    */
-    @PutMapping("/update")
-    public CommonResult<Boolean> updateUploadDiscuss(@Valid @RequestBody UploadDiscussSaveReqVO updateReqVO) {
-        uploadDiscussService.updateUploadDiscuss(updateReqVO);
-        return success(true);
-    }
 
     /**
     删除讨论记录

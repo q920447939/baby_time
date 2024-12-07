@@ -32,6 +32,10 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>musk-plugin-service-dynamic-source</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

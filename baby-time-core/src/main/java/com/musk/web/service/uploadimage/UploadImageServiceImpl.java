@@ -2,7 +2,7 @@ package com.musk.web.service.uploadimage;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.musk.web.controller.uploadimage.vo.UploadImagePageReqVO;
-import com.musk.web.controller.uploadimage.vo.UploadImageSaveReqVO;
+import com.musk.web.controller.uploadimage.vo.UploadImageAddReqVO;
 import com.musk.web.dal.dataobject.uploadimage.UploadImageDO;
 import com.musk.web.dal.dataobject.uploadimage.bo.UploadImagePageReqBO;
 import com.musk.web.dal.mysql.uploadimage.UploadImageMapper;
@@ -12,12 +12,10 @@ import org.example.musk.middleware.mybatisplus.mybatis.core.query.LambdaQueryWra
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
-import com.baomidou.dynamic.datasource.annotation.DS;
 
 
 /**
@@ -34,22 +32,22 @@ public class UploadImageServiceImpl extends ServiceImpl<UploadImageMapper, Uploa
     private UploadImageMapper uploadImageMapper;
 
     @Override
-    public Integer createUploadImage(UploadImageSaveReqVO createReqVO) {
+    public boolean createUploadImage(UploadImageAddReqVO createReqVO) {
+        List<UploadImageDO> list = new ArrayList<>();
+        for (String imageUrl : createReqVO.getImageUrls()) {
+            UploadImageDO uploadImageDO = new UploadImageDO();
+            uploadImageDO.setBabyId(createReqVO.getBabyId());
+            uploadImageDO.setUploadId(createReqVO.getUploadId());
+            uploadImageDO.setImageUrl(imageUrl);
+            list.add(uploadImageDO);
+        }
         // 插入
-        UploadImageDO uploadImage = BeanUtils.toBean(createReqVO, UploadImageDO.class);
-        uploadImageMapper.insert(uploadImage);
+        uploadImageMapper.insertBatch(list);
         // 返回
-        return uploadImage.getId();
+        return true;
     }
 
-    @Override
-    public void updateUploadImage(UploadImageSaveReqVO updateReqVO) {
-        // 校验存在
-        validateUploadImageExists(updateReqVO.getId());
-        // 更新
-        UploadImageDO updateObj = BeanUtils.toBean(updateReqVO, UploadImageDO.class);
-        uploadImageMapper.updateById(updateObj);
-    }
+
 
     @Override
     public void deleteUploadImage(Integer id) {

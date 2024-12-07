@@ -3,7 +3,7 @@ package com.musk.web.service.uploadimage;
 import java.util.*;
 
 import com.musk.web.controller.uploadimage.vo.UploadImagePageReqVO;
-import com.musk.web.controller.uploadimage.vo.UploadImageSaveReqVO;
+import com.musk.web.controller.uploadimage.vo.UploadImageAddReqVO;
 import com.musk.web.dal.dataobject.uploadimage.UploadImageDO;
 import jakarta.validation.*;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -23,14 +23,8 @@ public interface UploadImageService extends IService<UploadImageDO>{
      * @param createReqVO 创建信息
      * @return 编号
      */
-    Integer createUploadImage(@Valid UploadImageSaveReqVO createReqVO);
+    boolean createUploadImage(@Valid UploadImageAddReqVO createReqVO);
 
-    /**
-     * 更新上传图片
-     *
-     * @param updateReqVO 更新信息
-     */
-    void updateUploadImage(@Valid UploadImageSaveReqVO updateReqVO);
 
     /**
      * 删除上传图片
