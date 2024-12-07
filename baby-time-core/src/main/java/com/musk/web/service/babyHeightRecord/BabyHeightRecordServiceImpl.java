@@ -73,4 +73,8 @@ public class BabyHeightRecordServiceImpl extends ServiceImpl<BabyHeightRecordMap
         return this.baseMapper.selectList(new LambdaQueryWrapperX<BabyHeightRecordDO>().eq(BabyHeightRecordDO::getBabyId,babyId).orderByDesc(BabyHeightRecordDO::getRecordTime));
     }
 
+    @Override
+    public BabyHeightRecordDO getBabyHeightLatest(Integer babyId) {
+        return this.baseMapper.selectOne(new LambdaQueryWrapperX<BabyHeightRecordDO>().eq(BabyHeightRecordDO::getBabyId,babyId).orderByDesc(BabyHeightRecordDO::getVersion).last("limit 1"));
+    }
 }

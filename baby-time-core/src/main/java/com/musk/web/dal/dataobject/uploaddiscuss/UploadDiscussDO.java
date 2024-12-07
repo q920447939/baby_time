@@ -36,6 +36,10 @@ public class UploadDiscussDO extends BaseDO {
      */
     private Integer uploadId;
     /**
+     * 上传ID
+     */
+    private Integer discussMemberId;
+    /**
      * 评论
      */
     private String content;

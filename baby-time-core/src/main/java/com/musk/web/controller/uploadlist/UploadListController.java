@@ -130,12 +130,17 @@ public class UploadListController {
                 uploadMemberIds.add(uploadListDO.getUploadUser());
                 uploadIds.add(uploadListDO.getId());
             }
+
+            List<UploadDiscussDO> uploadDiscussList = uploadDiscussService.queryDiscussByUploadIds(uploadIds);
+            if (CollUtil.isNotEmpty(uploadDiscussList)) {
+                uploadMemberIds.addAll(uploadDiscussList.stream().map(k->k.getDiscussMemberId()).toList());
+            }
+
             List<MemberDO> memberInfoList = memberService.getMemberInfoByMemberIds(uploadMemberIds);
             Map<Integer, MemberDO> memberDOMap = memberInfoList.stream().collect(Collectors.toMap(k -> k.getId(), Function.identity(), (k1, k2) -> k1));
 
 
 
-            List<UploadDiscussDO> uploadDiscussList = uploadDiscussService.queryDiscussByUploadIds(uploadIds);
             Map<Integer, List<UploadDiscussDO>> discussMap = MapUtil.empty();
             if (CollUtil.isNotEmpty(uploadDiscussList)) {
                 discussMap = uploadDiscussList.stream().collect(Collectors.groupingBy(k -> k.getUploadId()));
@@ -156,7 +161,11 @@ public class UploadListController {
                 uploadListRespVO.setMemberSimpleResVO(BeanUtils.toBean(memberDOMap.get(uploadListRespVO.getUploadUser()), MemberSimpleResVO.class));
                 List<UploadDiscussDO> uploadDiscussDOList = discussMap.get(id);
                 if (uploadDiscussDOList != null) {
-                    uploadListRespVO.setUploadDiscussRespVO(BeanUtils.toBean(uploadDiscussDOList, UploadDiscussRespVO.class).stream().sorted(Comparator.comparing(UploadDiscussRespVO::getCreateTime).reversed()).toList());
+                    List<UploadDiscussRespVO> uploadDiscussRespVOList = BeanUtils.toBean(uploadDiscussDOList, UploadDiscussRespVO.class).stream().sorted(Comparator.comparing(UploadDiscussRespVO::getCreateTime).reversed()).toList();
+                    uploadDiscussRespVOList.forEach(k->{
+                        k.setMemberSimpleResVO(BeanUtils.toBean(memberDOMap.get(k.getDiscussMemberId()),MemberSimpleResVO.class));
+                    });
+                    uploadListRespVO.setUploadDiscussRespVO(uploadDiscussRespVOList);
                 }
                 UploadTypeLoadStrategy typeLoadStrategy = SpringUtil.getBean("uploadTypeLoadStrategy" + uploadListRespVO.getUploadType(),UploadTypeLoadStrategy.class);
                 typeLoadStrategy.set(uploadListRespVO,uploadTypeMaps);

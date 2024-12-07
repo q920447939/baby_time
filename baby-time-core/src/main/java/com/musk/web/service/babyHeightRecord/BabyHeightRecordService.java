@@ -52,4 +52,7 @@ public interface BabyHeightRecordService extends IService<BabyHeightRecordDO> {
     List<BabyHeightRecordDO> getBabyHeightAllRecord(Integer babyId);
 
 
+    BabyHeightRecordDO getBabyHeightLatest(Integer babyId);
+
+
 }

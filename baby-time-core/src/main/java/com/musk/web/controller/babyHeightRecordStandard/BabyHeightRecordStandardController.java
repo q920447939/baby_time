@@ -7,9 +7,11 @@ import com.musk.web.controller.babyHeightRecordStandard.vo.BabyHeightRecordStand
 import com.musk.web.controller.babyHeightRecordStandard.vo.BabyHeightRecordStandardRelationRespVO;
 import com.musk.web.controller.babyHeightRecordStandard.vo.BabyHeightRecordStandardRespVO;
 import com.musk.web.controller.babyHeightRecordStandard.vo.BabyHeightRecordStandardUpdateReqVO;
+import com.musk.web.dal.dataobject.babyHeightRecord.BabyHeightRecordDO;
 import com.musk.web.dal.dataobject.babyHeightRecordStandard.BabyHeightRecordStandardDO;
 import com.musk.web.dal.dataobject.babyHeightRecordStandard.bo.BabyHeightRecordStandardPageReqBO;
 import com.musk.web.dal.dataobject.info.BabyInfoDO;
+import com.musk.web.service.babyHeightRecord.BabyHeightRecordService;
 import com.musk.web.service.babyHeightRecordStandard.BabyHeightRecordStandardService;
 import com.musk.web.service.info.BabyInfoService;
 import jakarta.annotation.Resource;
@@ -47,6 +49,8 @@ public class BabyHeightRecordStandardController {
 
     @Resource
     private BabyInfoService babyInfoService;
+    @Resource
+    private BabyHeightRecordService babyHeightRecordService;
 
     @PostMapping("/create")
     public CommonResult<Integer> create(@Valid @RequestBody BabyHeightRecordStandardAddReqVO createReqVO) {
@@ -76,10 +80,14 @@ public class BabyHeightRecordStandardController {
         if (null == babyInfoDO) {
             return successNoData();
         }
+        BabyHeightRecordDO babyHeightLatest = babyHeightRecordService.getBabyHeightLatest(babyId);
+
         List<BabyHeightRecordStandardDO> list = babyHeightRecordStandardService.getBabyHeightRecordStandardByCountryCode(countryCode,babyInfoDO.getSex());
         return CommonResultUtils.wrapEmptyObjResult(list, () ->{
             LocalDate birthday = babyInfoDO.getBirthday();
             LocalDateTime birthdayLocalDateTime = LocalDateTimeUtil.of(birthday);
+
+            LocalDateTime latestRecordTime = LocalDateTimeUtil.of(babyHeightLatest.getRecordTime());
             List<BabyHeightRecordStandardRelationRespVO> resultList = new ArrayList<>(list.size());
             for (BabyHeightRecordStandardDO babyHeightRecordStandardDO : list) {
                 Integer standardMonth = babyHeightRecordStandardDO.getStandardMonth();
@@ -87,7 +95,9 @@ public class BabyHeightRecordStandardController {
                 res.setRelationTime(LocalDateTimeUtil.offset(birthdayLocalDateTime, standardMonth, ChronoUnit.MONTHS));
                 resultList.add(res);
             }
-            return resultList.stream().filter(k->LocalDateTimeUtil.between(birthdayLocalDateTime,k.getRelationTime(),ChronoUnit.MONTHS) < 2).toList();
+            return resultList.stream().filter(k->{
+                return k.getRelationTime().isBefore(latestRecordTime) || k.getRelationTime().isEqual(latestRecordTime) ||  LocalDateTimeUtil.between(latestRecordTime,k.getRelationTime(),ChronoUnit.MONTHS) <= 2;
+            } ).toList();
         });
     }
 
