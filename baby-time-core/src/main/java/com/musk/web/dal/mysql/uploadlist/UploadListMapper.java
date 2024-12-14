@@ -24,6 +24,7 @@ public interface UploadListMapper extends BaseMapperX<UploadListDO> {
                 .eqIfPresent(UploadListDO::getUploadUser, reqVO.getUploadUser())
                 .betweenIfPresent(UploadListDO::getUploadTime, reqVO.getUploadTime())
                 .eqIfPresent(UploadListDO::getRemark, reqVO.getRemark())
+                .eqIfPresent(UploadListDO::getIsCollect, reqVO.getIsCollect())
                 .betweenIfPresent(UploadListDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(UploadListDO::getId));
     }

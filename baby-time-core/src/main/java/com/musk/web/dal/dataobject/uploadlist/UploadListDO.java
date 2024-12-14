@@ -49,4 +49,10 @@ public class UploadListDO extends BaseDO {
      */
     private String remark;
 
+    /**
+     * 是否收藏(0:未收藏,1:已收藏)
+     */
+    private Boolean  isCollect;
+
+
 }

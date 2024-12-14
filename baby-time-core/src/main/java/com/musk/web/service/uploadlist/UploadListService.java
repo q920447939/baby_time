@@ -47,4 +47,11 @@ public interface UploadListService extends IService<UploadListDO>{
      */
     PageResult<UploadListDO> getUploadListPage(UploadListPageReqVO pageReqVO);
 
+    /**
+     * 标记或取消喜欢
+     * @param id
+     * @param isCollect
+     * @return
+     */
+    boolean markLike(Integer id, boolean isCollect);
 }

@@ -21,6 +21,9 @@ public class UploadListPageReqBO extends PageParam {
 
     private Integer uploadUser;
 
+    private Byte  isCollect;
+
+
 
     /**
     上传时间

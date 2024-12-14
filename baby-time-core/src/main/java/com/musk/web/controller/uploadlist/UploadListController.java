@@ -165,6 +165,19 @@ public class UploadListController {
         });
     }
 
+
+    /**
+     * 获得上传记录
+     */
+    @GetMapping("/like")
+    public CommonResult<Boolean> markLikeOrCancel(@RequestParam("id") Integer id,@RequestParam("isCollect")  boolean isCollect) {
+        boolean b = uploadListService.markLike(id,isCollect);
+        return success(b);
+    }
+
+
+
+
     public interface UploadTypeLoadStrategy{
          Object load(List<Integer> uploadIds);
          void set(UploadListRespVO uploadListRespVO, Object upLoadTypeInfoMap);

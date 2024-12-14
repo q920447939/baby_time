@@ -25,6 +25,9 @@ public class UploadListRespVO {
 
     private String remark;
 
+    private Boolean  isCollect;
+
+
     @JsonFormat(pattern = DateUtils.FORMAT_YEAR_MONTH_DAY, timezone = DateUtils.TIME_ZONE_DEFAULT)
     private LocalDateTime createTime;
 

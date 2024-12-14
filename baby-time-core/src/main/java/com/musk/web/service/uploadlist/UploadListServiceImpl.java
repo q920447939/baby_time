@@ -67,7 +67,23 @@ public class UploadListServiceImpl extends ServiceImpl<UploadListMapper, UploadL
 
     @Override
     public PageResult<UploadListDO> getUploadListPage(UploadListPageReqVO pageReqVO) {
-        return uploadListMapper.selectPage(BeanUtils.toBean(pageReqVO, UploadListPageReqBO.class));
+        UploadListPageReqBO uploadListPageReqBO = BeanUtils.toBean(pageReqVO, UploadListPageReqBO.class);
+        if (null != pageReqVO.getIsCollect()) {
+            uploadListPageReqBO.setIsCollect(pageReqVO.getIsCollect() ? (byte) 1 : 0);
+        }
+        return uploadListMapper.selectPage(uploadListPageReqBO);
     }
 
+
+    @Override
+    public boolean markLike(Integer id, boolean isCollect) {
+        UploadListDO uploadList = getUploadList(id);
+        if (null == uploadList) {
+            return false;
+        }
+        UploadListDO update = new UploadListDO();
+        update.setIsCollect(isCollect);
+        update.setId(id);
+        return uploadListMapper.updateById(update) > 0 ;
+    }
 }
