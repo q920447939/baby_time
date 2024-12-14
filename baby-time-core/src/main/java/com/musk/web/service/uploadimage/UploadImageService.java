@@ -23,7 +23,7 @@ public interface UploadImageService extends IService<UploadImageDO>{
      * @param createReqVO 创建信息
      * @return 编号
      */
-    boolean createUploadImage(@Valid UploadImageAddReqVO createReqVO);
+    boolean createUploadImage(@Valid UploadImageAddReqVO createReqVO,Integer uploadId);
 
 
     /**

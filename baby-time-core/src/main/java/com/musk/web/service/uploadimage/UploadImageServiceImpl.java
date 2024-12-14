@@ -32,12 +32,12 @@ public class UploadImageServiceImpl extends ServiceImpl<UploadImageMapper, Uploa
     private UploadImageMapper uploadImageMapper;
 
     @Override
-    public boolean createUploadImage(UploadImageAddReqVO createReqVO) {
+    public boolean createUploadImage(UploadImageAddReqVO createReqVO,Integer uploadId) {
         List<UploadImageDO> list = new ArrayList<>();
         for (String imageUrl : createReqVO.getImageUrls()) {
             UploadImageDO uploadImageDO = new UploadImageDO();
             uploadImageDO.setBabyId(createReqVO.getBabyId());
-            uploadImageDO.setUploadId(createReqVO.getUploadId());
+            uploadImageDO.setUploadId(uploadId);
             uploadImageDO.setImageUrl(imageUrl);
             list.add(uploadImageDO);
         }

@@ -6,6 +6,7 @@ import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussAddReqVO;
 import com.musk.web.dal.dataobject.uploaddiscuss.UploadDiscussDO;
 import com.musk.web.dal.dataobject.uploaddiscuss.bo.UploadDiscussPageReqBO;
 import com.musk.web.dal.mysql.uploaddiscuss.UploadDiscussMapper;
+import org.example.musk.common.context.ThreadLocalTenantContext;
 import org.example.musk.common.pojo.db.PageResult;
 import org.example.musk.common.util.object.BeanUtils;
 import org.example.musk.middleware.mybatisplus.mybatis.core.query.LambdaQueryWrapperX;
@@ -34,6 +35,7 @@ public class UploadDiscussServiceImpl extends ServiceImpl<UploadDiscussMapper, U
     public Integer createUploadDiscuss(UploadDiscussAddReqVO createReqVO) {
         // 插入
         UploadDiscussDO uploadDiscuss = BeanUtils.toBean(createReqVO, UploadDiscussDO.class);
+        uploadDiscuss.setDiscussMemberId(ThreadLocalTenantContext.getMemberId());
         uploadDiscussMapper.insert(uploadDiscuss);
         // 返回
         return uploadDiscuss.getId();

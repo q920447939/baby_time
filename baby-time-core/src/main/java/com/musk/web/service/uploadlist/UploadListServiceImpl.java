@@ -35,7 +35,7 @@ public class UploadListServiceImpl extends ServiceImpl<UploadListMapper, UploadL
         // 插入
         UploadListDO uploadList = BeanUtils.toBean(createReqVO, UploadListDO.class);
         if (uploadListMapper.insert(uploadList) > 0) {
-            uploadImageService.createUploadImage(createReqVO.getUploadImageAddReqVO());
+            uploadImageService.createUploadImage(createReqVO.getUploadImageAddReqVO(),uploadList.getId());
             return uploadList.getId();
         }
         // 返回

@@ -46,6 +46,9 @@ musk:
               member: baby_time
               log: baby_time_log
               statistics: baby_time_statistics
+            plugin:
+              upload: baby_time_statistics
+
 business:
   image:
     uploadImagePath: 'C:\tmp\static\image'

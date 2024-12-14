@@ -22,7 +22,7 @@ import static org.example.musk.common.pojo.CommonResult.success;
 
 
 @RestController
-@RequestMapping("/baby/upload-discuss")
+@RequestMapping("/api/baby/upload-discuss")
 @Validated
 public class UploadDiscussController {
 
