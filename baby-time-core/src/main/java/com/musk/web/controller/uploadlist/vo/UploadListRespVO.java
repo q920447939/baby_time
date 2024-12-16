@@ -1,6 +1,7 @@
 package com.musk.web.controller.uploadlist.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.musk.web.controller.babyUploadTag.vo.BabyUploadTagRespVO;
 import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussRespVO;
 import com.musk.web.controller.uploadimage.vo.UploadImageRespVO;
 import lombok.Data;
@@ -36,5 +37,7 @@ public class UploadListRespVO {
     private List<UploadDiscussRespVO> uploadDiscussRespVO;
 
     private List<UploadImageRespVO>  uploadImageRespVO;
+
+    private List<BabyUploadTagRespVO> babyUploadTagRespVOS;
 
 }

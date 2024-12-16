@@ -54,4 +54,8 @@ public interface UploadListService extends IService<UploadListDO>{
      * @return
      */
     boolean markLike(Integer id, boolean isCollect);
+
+    boolean relationTag(Integer uploadListId, Integer tagId);
+
+    boolean uploadListCancelTag(Integer uploadListId, Integer tagId);
 }

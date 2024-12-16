@@ -13,6 +13,8 @@ public class BabyUploadListRelationTagRespVO {
 
     private Integer babyId;
 
+    private Integer uploadListId;
+
     private Integer babyUploadTagId;
 
     private String creator;

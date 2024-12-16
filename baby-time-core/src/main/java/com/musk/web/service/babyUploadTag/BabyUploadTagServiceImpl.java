@@ -63,4 +63,9 @@ public class BabyUploadTagServiceImpl extends ServiceImpl<BabyUploadTagMapper, B
     public List<BabyUploadTagDO> getBabyUploadTagAll(Integer babyId) {
         return this.baseMapper.selectList(new LambdaQueryWrapperX<BabyUploadTagDO>().eq(BabyUploadTagDO::getBabyId,babyId));
     }
+
+    @Override
+    public List<BabyUploadTagDO> queryBabyUploadTag(List<Integer> tagIds) {
+        return this.baseMapper.selectList(new LambdaQueryWrapperX<BabyUploadTagDO>().in(BabyUploadTagDO::getId,tagIds));
+    }
 }

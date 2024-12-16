@@ -31,11 +31,12 @@ public class BabyUploadListRelationTagDO extends BaseDO {
     @TableField("tenant_id")
     private Integer tenantId;
 
+
     /**
-     * 宝宝id
+     * 上传id
      */
-    @TableField("baby_id")
-    private Integer babyId;
+    @TableField("upload_list_id")
+    private Integer uploadListId;
 
     /**
      * 宝宝上传文件标签ID

@@ -8,6 +8,8 @@ public class BabyUploadListRelationTagAddReqVO {
 
     private Integer babyId;
 
+    private Integer uploadListId;
+
     private Integer babyUploadTagId;
 
 }

@@ -3,15 +3,20 @@ package com.musk.web.controller.uploadlist;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.musk.web.controller.babyUploadTag.vo.BabyUploadTagRespVO;
 import com.musk.web.controller.uploaddiscuss.vo.UploadDiscussRespVO;
 import com.musk.web.controller.uploadimage.vo.UploadImageRespVO;
 import com.musk.web.controller.uploadlist.vo.MemberSimpleResVO;
 import com.musk.web.controller.uploadlist.vo.UploadListPageReqVO;
 import com.musk.web.controller.uploadlist.vo.UploadListRespVO;
 import com.musk.web.controller.uploadlist.vo.UploadListAddReqVO;
+import com.musk.web.dal.dataobject.babyUploadListRelationTag.BabyUploadListRelationTagDO;
+import com.musk.web.dal.dataobject.babyUploadTag.BabyUploadTagDO;
 import com.musk.web.dal.dataobject.uploaddiscuss.UploadDiscussDO;
 import com.musk.web.dal.dataobject.uploadimage.UploadImageDO;
 import com.musk.web.dal.dataobject.uploadlist.UploadListDO;
+import com.musk.web.service.babyUploadListRelationTag.BabyUploadListRelationTagService;
+import com.musk.web.service.babyUploadTag.BabyUploadTagService;
 import com.musk.web.service.uploaddiscuss.UploadDiscussService;
 import com.musk.web.service.uploadimage.UploadImageService;
 import com.musk.web.service.uploadlist.UploadListService;
@@ -60,6 +65,16 @@ public class UploadListController {
 
     @Resource
     private UploadDiscussService uploadDiscussService;
+
+
+
+    @Resource
+    private BabyUploadListRelationTagService babyUploadListRelationTagService;
+
+
+
+    @Resource
+    private BabyUploadTagService babyUploadTagService;
 
 
 
@@ -131,6 +146,35 @@ public class UploadListController {
             Map<Integer, MemberDO> memberDOMap = memberInfoList.stream().collect(Collectors.toMap(k -> k.getId(), Function.identity(), (k1, k2) -> k1));
 
 
+            Map<Integer,List<BabyUploadTagDO>> tagMap = MapUtil.empty();
+            List<BabyUploadListRelationTagDO> babyUploadListRelationTagList = babyUploadListRelationTagService.queryBabyUploadListRelationTag(uploadIds);
+            if (CollUtil.isNotEmpty(babyUploadListRelationTagList)) {
+                List<Integer> tagIds = babyUploadListRelationTagList.stream().map(k -> k.getBabyUploadTagId()).toList();
+                List<BabyUploadTagDO> babyUploadTagList = babyUploadTagService.queryBabyUploadTag(tagIds);
+                if (CollUtil.isNotEmpty(babyUploadTagList)) {
+                    Map<Integer, BabyUploadTagDO> tagDOMap = babyUploadTagList.stream().collect(Collectors.toMap(k -> k.getId(), Function.identity(), (a, b) -> b));
+                    Map<Integer, List<BabyUploadListRelationTagDO>> relationByUploadListMap = babyUploadListRelationTagList.stream().collect(Collectors.groupingBy(k -> k.getUploadListId()));
+                    tagMap = new HashMap<>();
+                    for (Integer uploadListId : relationByUploadListMap.keySet()) {
+                        List<BabyUploadListRelationTagDO> relationTagDOList = relationByUploadListMap.get(uploadListId);
+                        if (CollUtil.isEmpty(relationTagDOList)) {
+                            continue;
+                        }
+                        List<BabyUploadTagDO> list1 = new ArrayList<>(relationTagDOList.size());
+                        for (BabyUploadListRelationTagDO babyUploadListRelationTagDO : relationTagDOList) {
+                            BabyUploadTagDO babyUploadTagDO = tagDOMap.get(babyUploadListRelationTagDO.getBabyUploadTagId());
+                            if (null == babyUploadTagDO) {
+                                continue;
+                            }
+                            list1.add(babyUploadTagDO);
+                        }
+                        if (CollUtil.isNotEmpty(list1)) {
+                            tagMap.put(uploadListId,list1);
+                        }
+                    }
+                }
+            }
+
 
             Map<Integer, List<UploadDiscussDO>> discussMap = MapUtil.empty();
             if (CollUtil.isNotEmpty(uploadDiscussList)) {
@@ -160,6 +204,12 @@ public class UploadListController {
                 }
                 UploadTypeLoadStrategy typeLoadStrategy = SpringUtil.getBean("uploadTypeLoadStrategy" + uploadListRespVO.getUploadType(),UploadTypeLoadStrategy.class);
                 typeLoadStrategy.set(uploadListRespVO,uploadTypeMaps);
+
+
+                List<BabyUploadTagDO> babyUploadTagDOList = tagMap.get(id);
+                if (CollUtil.isNotEmpty(babyUploadTagDOList)) {
+                    uploadListRespVO.setBabyUploadTagRespVOS(BeanUtils.toBean(babyUploadTagDOList, BabyUploadTagRespVO.class));
+                }
             }
             return new PageResult<>(uploadListRespVOS, pageResult.getTotal());
         });
@@ -167,7 +217,7 @@ public class UploadListController {
 
 
     /**
-     * 获得上传记录
+     * 收藏/取消收藏
      */
     @GetMapping("/like")
     public CommonResult<Boolean> markLikeOrCancel(@RequestParam("id") Integer id,@RequestParam("isCollect")  boolean isCollect) {
@@ -176,6 +226,25 @@ public class UploadListController {
     }
 
 
+
+    /**
+     * 增加标签
+     */
+    @GetMapping("/relationTag")
+    public CommonResult<Boolean> relationTag(@RequestParam("id") Integer id,@RequestParam("tagId")  Integer tagId) {
+        boolean b = uploadListService.relationTag(id,tagId);
+        return success(b);
+    }
+
+
+    /**
+     * 移除标签
+     */
+    @GetMapping("/uploadListCancelTag")
+    public CommonResult<Boolean> uploadListCancelTag(@RequestParam("id") Integer id,@RequestParam("tagId")  Integer tagId) {
+        boolean b = uploadListService.uploadListCancelTag(id,tagId);
+        return success(b);
+    }
 
 
     public interface UploadTypeLoadStrategy{

@@ -12,6 +12,8 @@ public class BabyUploadListRelationTagUpdateReqVO {
 
     private Integer babyId;
 
+    private Integer uploadListId;
+
     private Integer babyUploadTagId;
 
 }

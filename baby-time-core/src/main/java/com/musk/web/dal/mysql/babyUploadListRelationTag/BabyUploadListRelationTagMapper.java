@@ -17,10 +17,8 @@ public interface BabyUploadListRelationTagMapper extends BaseMapperX<BabyUploadL
 
     default PageResult<BabyUploadListRelationTagDO> selectPage(BabyUploadListRelationTagPageReqBO reqVO) {
         return selectPage(reqVO, new LambdaQueryWrapperX<BabyUploadListRelationTagDO>()
-                
-.eqIfPresent(BabyUploadListRelationTagDO::getBabyId, reqVO.getBabyId()) 
-                .eqIfPresent(BabyUploadListRelationTagDO::getBabyUploadTagId, reqVO.getBabyUploadTagId()) 
-                .betweenIfPresent(BabyUploadListRelationTagDO::getCreateTime, reqVO.getCreateTime()[0], reqVO.getCreateTime()[1]) 
+                .eqIfPresent(BabyUploadListRelationTagDO::getBabyUploadTagId, reqVO.getBabyUploadTagId())
+                .betweenIfPresent(BabyUploadListRelationTagDO::getCreateTime, reqVO.getCreateTime()[0], reqVO.getCreateTime()[1])
                 .orderByDesc(BabyUploadListRelationTagDO::getId));
     }
 

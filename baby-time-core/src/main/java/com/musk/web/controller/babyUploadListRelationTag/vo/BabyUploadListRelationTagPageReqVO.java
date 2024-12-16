@@ -15,6 +15,8 @@ public class BabyUploadListRelationTagPageReqVO extends PageParam {
 
     private Integer babyId;
 
+    private Integer uploadListId;
+
     private Integer babyUploadTagId;
 
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

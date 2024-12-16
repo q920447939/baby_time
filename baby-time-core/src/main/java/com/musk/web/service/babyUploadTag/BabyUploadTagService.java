@@ -50,4 +50,6 @@ public interface BabyUploadTagService extends IService<BabyUploadTagDO> {
     PageResult<BabyUploadTagDO> getBabyUploadTagPage(BabyUploadTagPageReqBO pageReqBO);
 
     List<BabyUploadTagDO> getBabyUploadTagAll(Integer babyId);
+
+    List<BabyUploadTagDO> queryBabyUploadTag(List<Integer> tagIds);
 }

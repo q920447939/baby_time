@@ -24,6 +24,8 @@ import java.util.Optional;
 public enum BusinessExceptionEnum implements IBaseErrorInfo {
 
     FAMILY_IS_EXISTS("4210002", "家庭已存在"),
+    TAG_IS_RELATION("4210103", "该标签已被关联"),
+    TAG_RELATION_NOT_EXISTS("4210104", "该标签未存在关联"),
 
 
 

@@ -6,6 +6,8 @@ import com.musk.web.dal.dataobject.babyUploadListRelationTag.bo.BabyUploadListRe
 import jakarta.validation.*;
 import org.example.musk.common.pojo.db.PageResult;
 
+import java.util.List;
+
 /**
  * 宝宝上传记录与标签关联 Service 接口
  *
@@ -47,4 +49,9 @@ public interface BabyUploadListRelationTagService extends IService<BabyUploadLis
      */
     PageResult<BabyUploadListRelationTagDO> getBabyUploadListRelationTagPage(BabyUploadListRelationTagPageReqBO pageReqBO);
 
+    List<BabyUploadListRelationTagDO> queryBabyUploadListRelationTag(List<Integer> uploadIds);
+
+    boolean existsBabyUploadListRelationTagServiceByTagId(Integer uploadListId,Integer tagId);
+
+    boolean uploadListCancelTag(Integer uploadListId, Integer tagId);
 }
