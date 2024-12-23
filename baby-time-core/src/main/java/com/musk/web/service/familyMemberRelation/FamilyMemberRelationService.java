@@ -6,6 +6,8 @@ import com.musk.web.dal.dataobject.familyMemberRelation.bo.FamilyMemberRelationP
 import jakarta.validation.*;
 import org.example.musk.common.pojo.db.PageResult;
 
+import java.util.List;
+
 /**
  *  Service 接口
  *
@@ -46,5 +48,8 @@ public interface FamilyMemberRelationService extends IService<FamilyMemberRelati
      * @return 分页
      */
     PageResult<FamilyMemberRelationDO> getFamilyMemberRelationPage(FamilyMemberRelationPageReqBO pageReqBO);
+
+
+    List<FamilyMemberRelationDO> getFamilyMemberRelationByMemberId(Integer memberId);
 
 }

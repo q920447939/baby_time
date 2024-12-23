@@ -16,6 +16,9 @@ import org.example.musk.common.util.commonResult.CommonResultUtils;
 import org.example.musk.common.util.object.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+
 import static org.example.musk.common.pojo.CommonResult.success;
 
 /**

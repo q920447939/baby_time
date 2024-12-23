@@ -13,4 +13,8 @@ public class FamilySaveReqVO {
     @NotEmpty(message = "家庭名称不能为空")
     private String familyName;
 
+
+    private String familyBackgroundUrl;
+
+
 }

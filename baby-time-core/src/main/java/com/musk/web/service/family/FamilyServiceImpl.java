@@ -8,15 +8,21 @@ import com.musk.web.dal.dataobject.family.bo.FamilyPageReqBO;
 import com.musk.web.dal.mysql.family.FamilyMapper;
 import com.musk.web.event.familyMember.entity.FamilyMemberEventInfo;
 import com.musk.web.exception.BusinessExceptionEnum;
+import com.musk.web.service.familyMemberRelation.FamilyMemberRelationService;
+import jakarta.validation.constraints.NotEmpty;
 import org.example.musk.common.exception.BusinessException;
 import org.example.musk.common.pojo.db.PageResult;
 import org.example.musk.common.util.object.BeanUtils;
+import org.example.musk.middleware.mybatisplus.mybatis.core.query.LambdaQueryWrapperX;
+import org.example.musk.plugin.lock.config.anno.PluginLockSafeExec;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 
 /**
@@ -34,20 +40,24 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
     @Resource
     private ApplicationContext applicationContext;
 
+
     @Override
+    @PluginLockSafeExec
     public Integer createFamily(FamilySaveReqVO createReqVO) {
+        if (this.queryFamilyByName(createReqVO.getFamilyName())) {
+            throw new BusinessException(BusinessExceptionEnum.FAMILY_IS_EXISTS);
+        }
         // 插入
         FamilyDO family = BeanUtils.toBean(createReqVO, FamilyDO.class);
         family.setFamilyMemberCount(1);
         familyMapper.insert(family);
-        boolean exists = this.baseMapper.exists(null);
-        if (exists) {
-            throw new BusinessException(BusinessExceptionEnum.FAMILY_IS_EXISTS);
-        }
-
         applicationContext.publishEvent(FamilyMemberEventInfo.builder().familyId(family.getId()).memberId(family.getCreateId()).build());
         // 返回
         return family.getId();
+    }
+
+    private boolean queryFamilyByName(String familyName) {
+        return this.baseMapper.exists(new LambdaQueryWrapperX<FamilyDO>().eq(FamilyDO::getFamilyName,familyName));
     }
 
     @Override
@@ -83,8 +93,17 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
     }
 
     @Override
+    public List<FamilyDO> getFamily(List<Integer> ids) {
+        return familyMapper.selectBatchIds(ids);
+    }
+
+    @Override
     public PageResult<FamilyDO> getFamilyPage(FamilyPageReqVO pageReqVO) {
         return familyMapper.selectPage(BeanUtils.toBean(pageReqVO, FamilyPageReqBO.class));
     }
 
+    @Override
+    public FamilyDO getFamilyByFamilyCode(String applyFamilyCode) {
+        return familyMapper.selectOne(new LambdaQueryWrapperX<FamilyDO>().eq(FamilyDO::getFamilyCode,applyFamilyCode));
+    }
 }

@@ -7,8 +7,11 @@ import com.musk.web.dal.mysql.familyMemberRelation.FamilyMemberRelationMapper;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.musk.common.pojo.db.PageResult;
+import org.example.musk.middleware.mybatisplus.mybatis.core.query.LambdaQueryWrapperX;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 /**
  * Service 实现类
@@ -58,4 +61,8 @@ public class FamilyMemberRelationServiceImpl extends ServiceImpl<FamilyMemberRel
         return this.baseMapper.selectPage(pageReqBO);
     }
 
+    @Override
+    public List<FamilyMemberRelationDO> getFamilyMemberRelationByMemberId(Integer memberId) {
+        return this.baseMapper.selectList(new LambdaQueryWrapperX<FamilyMemberRelationDO>().eq(FamilyMemberRelationDO::getMemberId,memberId));
+    }
 }

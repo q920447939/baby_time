@@ -5,7 +5,10 @@ import com.musk.web.controller.family.vo.FamilySaveReqVO;
 import com.musk.web.dal.dataobject.family.FamilyDO;
 import jakarta.validation.*;
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.validation.constraints.NotBlank;
 import org.example.musk.common.pojo.db.PageResult;
+
+import java.util.List;
 
 
 /**
@@ -46,6 +49,14 @@ public interface FamilyService extends IService<FamilyDO>{
     FamilyDO getFamily(Integer id);
 
     /**
+     * 获得家庭
+     *
+     * @param ids 编号集合
+     * @return 家庭
+     */
+    List<FamilyDO> getFamily(List<Integer> ids);
+
+    /**
      * 获得家庭分页
      *
      * @param pageReqVO 分页查询
@@ -53,4 +64,5 @@ public interface FamilyService extends IService<FamilyDO>{
      */
     PageResult<FamilyDO> getFamilyPage(FamilyPageReqVO pageReqVO);
 
+    FamilyDO getFamilyByFamilyCode(String applyFamilyCode);
 }

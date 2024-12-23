@@ -1,15 +1,20 @@
 package com.musk.web.controller.family;
 
+import cn.hutool.core.collection.CollUtil;
+import com.musk.web.FamilyConfig;
 import com.musk.web.controller.family.vo.FamilyPageReqVO;
 import com.musk.web.controller.family.vo.FamilyRespVO;
 import com.musk.web.controller.family.vo.FamilySaveReqVO;
 import com.musk.web.dal.dataobject.family.FamilyDO;
+import com.musk.web.dal.dataobject.familyMemberRelation.FamilyMemberRelationDO;
 import com.musk.web.service.family.FamilyService;
+import com.musk.web.service.familyMemberRelation.FamilyMemberRelationService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.example.musk.common.context.ThreadLocalTenantContext;
 import org.example.musk.common.pojo.CommonResult;
 import org.example.musk.common.pojo.db.PageResult;
+import org.example.musk.common.util.commonResult.CommonResultUtils;
 import org.example.musk.common.util.object.BeanUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,16 +26,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.example.musk.common.pojo.CommonResult.success;
+import static org.example.musk.common.pojo.CommonResult.successNoData;
 
 
 @RestController
-@RequestMapping("/baby/family")
+@RequestMapping("/api/baby/family")
 @Validated
 public class FamilyController {
 
     @Resource
     private FamilyService familyService;
+
+    @Resource
+    private FamilyMemberRelationService familyMemberRelationService;
+
+    @Resource
+    private FamilyConfig familyConfig;
 
     /**
      * 创建家庭
@@ -38,6 +53,7 @@ public class FamilyController {
     @PostMapping("/create")
     public CommonResult<Integer> createFamily(@Valid @RequestBody FamilySaveReqVO createReqVO) {
         createReqVO.setCreateId(ThreadLocalTenantContext.getMemberId());
+        createReqVO.setFamilyBackgroundUrl(familyConfig.getFamilyBackgroundUrl());
         return success(familyService.createFamily(createReqVO));
     }
 
@@ -63,9 +79,16 @@ public class FamilyController {
      * 获得家庭
      */
     @GetMapping("/get")
-    public CommonResult<FamilyRespVO> getFamily(@RequestParam("id") Integer id) {
-        FamilyDO family = familyService.getFamily(id);
-        return success(BeanUtils.toBean(family, FamilyRespVO.class));
+    public CommonResult<List<FamilyRespVO>> getFamily() {
+        List<FamilyMemberRelationDO> familyMemberRelationList = familyMemberRelationService.getFamilyMemberRelationByMemberId(ThreadLocalTenantContext.getMemberId());
+        return CommonResultUtils.wrapEmptyObjResult(familyMemberRelationList,()->{
+            if (CollUtil.isEmpty(familyMemberRelationList)) {
+                return Collections.emptyList();
+            }
+            List<Integer> familyIds = familyMemberRelationList.stream().map(k -> k.getFamilyId()).toList();
+            List<FamilyDO> familyList = familyService.getFamily(familyIds);
+            return BeanUtils.toBean(familyList, FamilyRespVO.class);
+        });
     }
 
 

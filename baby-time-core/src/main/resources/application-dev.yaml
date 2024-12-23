@@ -52,3 +52,6 @@ musk:
 business:
   image:
     uploadImagePath: 'C:\tmp\static\image'
+  family:
+      family-background-url: "111"
+

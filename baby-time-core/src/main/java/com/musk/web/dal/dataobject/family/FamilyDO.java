@@ -42,4 +42,11 @@ public class FamilyDO extends BaseDO {
      */
     private Integer familyMemberCount;
 
+    private String familyBackgroundUrl;
+
+    /**
+     * 家庭编码
+     */
+    private String familyCode;
+
 }
