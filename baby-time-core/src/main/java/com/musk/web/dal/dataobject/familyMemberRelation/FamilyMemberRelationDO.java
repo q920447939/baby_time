@@ -37,4 +37,10 @@ public class FamilyMemberRelationDO extends BaseDO {
     @TableField("member_id")
     private Integer memberId;
 
+    /**
+     * 角色ID
+     */
+    @TableField("role_id")
+    private Integer roleId;
+
 }

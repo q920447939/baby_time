@@ -20,4 +20,9 @@ public class FamilyRespVO {
 
     @JsonFormat(pattern = DateUtils.FORMAT_YEAR_MONTH_DAY, timezone = DateUtils.TIME_ZONE_DEFAULT)
     private LocalDateTime createTime;
+
+
+    private Integer roleId;
+    private String roleName;
+
 }

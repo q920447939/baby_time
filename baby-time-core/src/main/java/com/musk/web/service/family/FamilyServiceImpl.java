@@ -6,6 +6,7 @@ import com.musk.web.controller.family.vo.FamilySaveReqVO;
 import com.musk.web.dal.dataobject.family.FamilyDO;
 import com.musk.web.dal.dataobject.family.bo.FamilyPageReqBO;
 import com.musk.web.dal.mysql.family.FamilyMapper;
+import com.musk.web.enums.role.RoleInfoEnums;
 import com.musk.web.event.familyMember.entity.FamilyMemberEventInfo;
 import com.musk.web.exception.BusinessExceptionEnum;
 import com.musk.web.service.familyMemberRelation.FamilyMemberRelationService;
@@ -51,7 +52,7 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
         FamilyDO family = BeanUtils.toBean(createReqVO, FamilyDO.class);
         family.setFamilyMemberCount(1);
         familyMapper.insert(family);
-        applicationContext.publishEvent(FamilyMemberEventInfo.builder().familyId(family.getId()).memberId(family.getCreateId()).build());
+        applicationContext.publishEvent(FamilyMemberEventInfo.builder().familyId(family.getId()).memberId(family.getCreateId()).roleId(RoleInfoEnums.ADMIN.getId()).build());
         // 返回
         return family.getId();
     }

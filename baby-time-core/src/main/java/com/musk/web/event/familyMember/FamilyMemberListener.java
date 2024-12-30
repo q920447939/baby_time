@@ -29,6 +29,7 @@ public class FamilyMemberListener {
         FamilyMemberRelationDO info = new FamilyMemberRelationDO();
         info.setFamilyId(event.getFamilyId());
         info.setMemberId(event.getMemberId());
+        info.setRoleId(event.getRoleId());
         memberRelationService.save(info);
     }
 }

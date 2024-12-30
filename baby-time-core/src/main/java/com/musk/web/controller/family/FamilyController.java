@@ -7,6 +7,7 @@ import com.musk.web.controller.family.vo.FamilyRespVO;
 import com.musk.web.controller.family.vo.FamilySaveReqVO;
 import com.musk.web.dal.dataobject.family.FamilyDO;
 import com.musk.web.dal.dataobject.familyMemberRelation.FamilyMemberRelationDO;
+import com.musk.web.enums.role.RoleInfoEnums;
 import com.musk.web.service.family.FamilyService;
 import com.musk.web.service.familyMemberRelation.FamilyMemberRelationService;
 import jakarta.annotation.Resource;
@@ -26,8 +27,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.example.musk.common.pojo.CommonResult.success;
 import static org.example.musk.common.pojo.CommonResult.successNoData;
@@ -43,6 +48,7 @@ public class FamilyController {
 
     @Resource
     private FamilyMemberRelationService familyMemberRelationService;
+
 
     @Resource
     private FamilyConfig familyConfig;
@@ -80,14 +86,25 @@ public class FamilyController {
      */
     @GetMapping("/get")
     public CommonResult<List<FamilyRespVO>> getFamily() {
-        List<FamilyMemberRelationDO> familyMemberRelationList = familyMemberRelationService.getFamilyMemberRelationByMemberId(ThreadLocalTenantContext.getMemberId());
+        Integer memberId = ThreadLocalTenantContext.getMemberId();
+        List<FamilyMemberRelationDO> familyMemberRelationList = familyMemberRelationService.getFamilyMemberRelationByMemberId(memberId);
         return CommonResultUtils.wrapEmptyObjResult(familyMemberRelationList,()->{
             if (CollUtil.isEmpty(familyMemberRelationList)) {
                 return Collections.emptyList();
             }
             List<Integer> familyIds = familyMemberRelationList.stream().map(k -> k.getFamilyId()).toList();
+
+            Map<Integer, FamilyMemberRelationDO> familyMemberRelationMap = familyMemberRelationList.stream().collect(Collectors.toMap(k -> k.getFamilyId(), Function.identity(), (a, b) -> b));
             List<FamilyDO> familyList = familyService.getFamily(familyIds);
-            return BeanUtils.toBean(familyList, FamilyRespVO.class);
+            List<FamilyRespVO> familyRespVOList  = new ArrayList<>();
+            for (FamilyDO familyDO : familyList) {
+                FamilyRespVO familyRespVO = BeanUtils.toBean(familyDO, FamilyRespVO.class);
+                FamilyMemberRelationDO familyMemberRelationDO = familyMemberRelationMap.get(familyDO.getId());
+                familyRespVO.setRoleId(familyMemberRelationDO.getRoleId());
+                familyRespVO.setRoleName(RoleInfoEnums.getRoleInfoEnumsByRoleId(familyMemberRelationDO.getRoleId()).getDesc());
+                familyRespVOList.add(familyRespVO);
+            }
+            return familyRespVOList;
         });
     }
 
