@@ -8,6 +8,7 @@ import com.musk.web.dal.dataobject.info.bo.BabyInfoPageReqBO;
 import com.musk.web.dal.mysql.info.BabyInfoMapper;
 import org.example.musk.common.pojo.db.PageResult;
 import org.example.musk.common.util.object.BeanUtils;
+import org.example.musk.middleware.mybatisplus.mybatis.core.query.LambdaQueryWrapperX;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 
 
 /**
@@ -74,4 +76,8 @@ public class BabyInfoServiceImpl extends ServiceImpl<BabyInfoMapper, BabyInfoDO>
         return infoMapper.selectPage(BeanUtils.toBean(pageReqVO, BabyInfoPageReqBO.class));
     }
 
+    @Override
+    public List<BabyInfoDO> fetchAllBaby(Integer familyId) {
+        return infoMapper.selectList(new LambdaQueryWrapperX<BabyInfoDO>().eq(BabyInfoDO::getFamilyId,familyId));
+    }
 }

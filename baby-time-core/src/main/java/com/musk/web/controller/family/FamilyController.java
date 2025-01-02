@@ -59,7 +59,7 @@ public class FamilyController {
     @PostMapping("/create")
     public CommonResult<Integer> createFamily(@Valid @RequestBody FamilySaveReqVO createReqVO) {
         createReqVO.setCreateId(ThreadLocalTenantContext.getMemberId());
-        createReqVO.setFamilyBackgroundUrl(familyConfig.getFamilyBackgroundUrl());
+        createReqVO.setFamilyBackgroundUrl(createReqVO.getFamilyBackgroundUrl());
         return success(familyService.createFamily(createReqVO));
     }
 
@@ -102,6 +102,7 @@ public class FamilyController {
                 FamilyMemberRelationDO familyMemberRelationDO = familyMemberRelationMap.get(familyDO.getId());
                 familyRespVO.setRoleId(familyMemberRelationDO.getRoleId());
                 familyRespVO.setRoleName(RoleInfoEnums.getRoleInfoEnumsByRoleId(familyMemberRelationDO.getRoleId()).getDesc());
+                familyRespVO.setFamilyBackgroundUrl(familyDO.getFamilyBackgroundUrl());
                 familyRespVOList.add(familyRespVO);
             }
             return familyRespVOList;

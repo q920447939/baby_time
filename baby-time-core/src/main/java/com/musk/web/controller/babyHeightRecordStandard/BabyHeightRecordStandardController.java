@@ -87,7 +87,6 @@ public class BabyHeightRecordStandardController {
             LocalDate birthday = babyInfoDO.getBirthday();
             LocalDateTime birthdayLocalDateTime = LocalDateTimeUtil.of(birthday);
 
-            LocalDateTime latestRecordTime = LocalDateTimeUtil.of(babyHeightLatest.getRecordTime());
             List<BabyHeightRecordStandardRelationRespVO> resultList = new ArrayList<>(list.size());
             for (BabyHeightRecordStandardDO babyHeightRecordStandardDO : list) {
                 Integer standardMonth = babyHeightRecordStandardDO.getStandardMonth();
@@ -95,9 +94,13 @@ public class BabyHeightRecordStandardController {
                 res.setRelationTime(LocalDateTimeUtil.offset(birthdayLocalDateTime, standardMonth, ChronoUnit.MONTHS));
                 resultList.add(res);
             }
-            return resultList.stream().filter(k->{
-                return k.getRelationTime().isBefore(latestRecordTime) || k.getRelationTime().isEqual(latestRecordTime) ||  LocalDateTimeUtil.between(latestRecordTime,k.getRelationTime(),ChronoUnit.MONTHS) <= 2;
-            } ).toList();
+            if (null != babyHeightLatest) {
+                LocalDateTime latestRecordTime = LocalDateTimeUtil.of(babyHeightLatest.getRecordTime());
+                return resultList.stream().filter(k->{
+                    return k.getRelationTime().isBefore(latestRecordTime) || k.getRelationTime().isEqual(latestRecordTime) ||  LocalDateTimeUtil.between(latestRecordTime,k.getRelationTime(),ChronoUnit.MONTHS) <= 2;
+                } ).toList();
+            }
+            return  resultList;
         });
     }
 

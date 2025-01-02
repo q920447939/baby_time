@@ -7,6 +7,8 @@ import jakarta.validation.*;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.example.musk.common.pojo.db.PageResult;
 
+import java.util.List;
+
 
 /**
  * 宝宝信息 Service 接口
@@ -53,4 +55,5 @@ public interface BabyInfoService extends IService<BabyInfoDO>{
      */
     PageResult<BabyInfoDO> getInfoPage(BabyInfoPageReqVO pageReqVO);
 
+    List<BabyInfoDO> fetchAllBaby(Integer familyId);
 }

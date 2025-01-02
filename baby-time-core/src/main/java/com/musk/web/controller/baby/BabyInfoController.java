@@ -18,7 +18,8 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.*;
 
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.example.musk.common.pojo.CommonResult.success;
 import static org.example.musk.common.pojo.CommonResult.successNoData;
@@ -30,7 +31,7 @@ import static org.example.musk.common.pojo.CommonResult.successNoData;
 public class BabyInfoController {
 
     @Resource
-    private BabyInfoService infoService;
+    private BabyInfoService babyInfoService;
     @Resource
     private FamilyService familyService;
 
@@ -39,7 +40,7 @@ public class BabyInfoController {
     */
     @PostMapping("/create")
     public CommonResult<Integer> createInfo(@Valid @RequestBody BabyInfoSaveReqVO createReqVO) {
-        return success(infoService.createInfo(createReqVO));
+        return success(babyInfoService.createInfo(createReqVO));
     }
 
     /**
@@ -47,7 +48,7 @@ public class BabyInfoController {
     */
     @PutMapping("/update")
     public CommonResult<Boolean> updateInfo(@Valid @RequestBody BabyInfoSaveReqVO updateReqVO) {
-        infoService.updateInfo(updateReqVO);
+        babyInfoService.updateInfo(updateReqVO);
         return success(true);
     }
 
@@ -56,7 +57,7 @@ public class BabyInfoController {
     */
     @DeleteMapping("/delete")
     public CommonResult<Boolean> deleteInfo(@RequestParam("id") Integer id) {
-        infoService.deleteInfo(id);
+        babyInfoService.deleteInfo(id);
         return success(true);
     }
 
@@ -65,7 +66,7 @@ public class BabyInfoController {
     */
     @GetMapping("/get")
     public CommonResult<BabyInfoRespVO> getInfo(@RequestParam("id") Integer id) {
-        BabyInfoDO info = infoService.getInfo(id);
+        BabyInfoDO info = babyInfoService.getInfo(id);
         return CommonResultUtils.wrapEmptyObjResult(info, () ->{
             FamilyDO familyDO = familyService.getFamily(info.getFamilyId());
             BabyInfoRespVO vo = BeanUtils.toBean(info, BabyInfoRespVO.class);
@@ -76,11 +77,30 @@ public class BabyInfoController {
 
 
     /**
+    获得宝宝信息
+    */
+    @GetMapping("/fetchAllBaby")
+    public CommonResult<List<BabyInfoRespVO>> fetchAllBaby(@RequestParam("familyId") Integer familyId) {
+        FamilyDO familyDO = familyService.getFamily(familyId);
+        List<BabyInfoDO> babyInfoList = babyInfoService.fetchAllBaby(familyId);
+        return CommonResultUtils.wrapEmptyObjResult(babyInfoList, () ->{
+            List<BabyInfoRespVO> babyInfoRespVOList = new ArrayList<>();
+            for (BabyInfoDO babyInfoDO : babyInfoList) {
+                BabyInfoRespVO vo = BeanUtils.toBean(babyInfoDO, BabyInfoRespVO.class);
+                vo.setFamilyRespVO( BeanUtils.toBean(familyDO, FamilyRespVO.class));
+                babyInfoRespVOList.add(vo);
+            }
+            return babyInfoRespVOList;
+        });
+    }
+
+
+    /**
     获得宝宝信息分页
     */
     @GetMapping("/page")
     public CommonResult<PageResult<BabyInfoRespVO>> getInfoPage(@Valid BabyInfoPageReqVO pageReqVO) {
-        PageResult<BabyInfoDO> pageResult = infoService.getInfoPage(pageReqVO);
+        PageResult<BabyInfoDO> pageResult = babyInfoService.getInfoPage(pageReqVO);
         return CommonResultUtils.wrapEmptyPageResult(pageResult, () -> BeanUtils.toBean(pageResult, BabyInfoRespVO.class));
     }
 

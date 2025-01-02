@@ -25,4 +25,7 @@ public class FamilyRespVO {
     private Integer roleId;
     private String roleName;
 
+    private String familyBackgroundUrl;
+
+
 }

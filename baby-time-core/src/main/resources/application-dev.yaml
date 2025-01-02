@@ -9,17 +9,17 @@ spring:
       primary: baby_time
       datasource:
         baby_time:
-          url: jdbc:mysql://blk-mysql.com:63306/baby_time?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&allowMultiQueries=true
+          url: jdbc:mysql://blk-mysql-local.com:63306/baby_time?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&allowMultiQueries=true
           driver-class-name: com.mysql.jdbc.Driver
           username: root
           password: blk@2024~NIUBI!mysql%mmm
         baby_time_log:
-          url: jdbc:mysql://blk-mysql.com:63306/baby_time_log?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&allowMultiQueries=true
+          url: jdbc:mysql://blk-mysql-local.com:63306/baby_time_log?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&allowMultiQueries=true
           driver-class-name: com.mysql.jdbc.Driver
           username: root
           password: blk@2024~NIUBI!mysql%mmm
         baby_time_statistics:
-          url: jdbc:mysql://blk-mysql.com:63306/baby_time_statistics?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&allowMultiQueries=true
+          url: jdbc:mysql://blk-mysql-local.com:63306/baby_time_statistics?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2b8&allowMultiQueries=true
           driver-class-name: com.mysql.jdbc.Driver
           username: root
           password: blk@2024~NIUBI!mysql%mmm
@@ -48,10 +48,9 @@ musk:
               statistics: baby_time_statistics
             plugin:
               upload: baby_time_statistics
-    plugin:
-      web:
-        upload:
-          domain: http://10.0.2.2:48082/musk/static/file/
+    web:
+      upload:
+        domain: 'http://baby-time.com:48082/${spring.application.name}'
 
 business:
   image:
