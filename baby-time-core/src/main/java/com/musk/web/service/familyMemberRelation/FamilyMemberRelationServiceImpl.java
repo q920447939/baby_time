@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.musk.web.dal.dataobject.familyMemberRelation.FamilyMemberRelationDO;
 import com.musk.web.dal.dataobject.familyMemberRelation.bo.FamilyMemberRelationPageReqBO;
 import com.musk.web.dal.mysql.familyMemberRelation.FamilyMemberRelationMapper;
+import com.musk.web.enums.role.RoleInfoEnums;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.musk.common.pojo.db.PageResult;
@@ -64,5 +65,28 @@ public class FamilyMemberRelationServiceImpl extends ServiceImpl<FamilyMemberRel
     @Override
     public List<FamilyMemberRelationDO> getFamilyMemberRelationByMemberId(Integer memberId) {
         return this.baseMapper.selectList(new LambdaQueryWrapperX<FamilyMemberRelationDO>().eq(FamilyMemberRelationDO::getMemberId,memberId));
+    }
+
+    @Override
+    public List<FamilyMemberRelationDO> getFamilyMemberRelationByFamilyId(Integer familyId) {
+        return this.baseMapper.selectList(new LambdaQueryWrapperX<FamilyMemberRelationDO>().eq(FamilyMemberRelationDO::getFamilyId,familyId));
+    }
+
+    @Override
+    public boolean removeFamilyMember(Integer familyId, Integer memberId) {
+        return this.baseMapper.delete(new LambdaQueryWrapperX<FamilyMemberRelationDO>()
+                .eq(FamilyMemberRelationDO::getFamilyId,familyId)
+                .eq(FamilyMemberRelationDO::getMemberId,memberId)
+        ) > 0;
+    }
+
+    @Override
+    public Boolean setFamilyMemberRole(Integer familyId, Integer memberId, Integer roleId) {
+        FamilyMemberRelationDO update = new FamilyMemberRelationDO();
+        update.setRoleId(roleId);
+        return this.baseMapper.update(update,new LambdaQueryWrapperX<FamilyMemberRelationDO>()
+                .eq(FamilyMemberRelationDO::getFamilyId,familyId)
+                .eq(FamilyMemberRelationDO::getMemberId,memberId)
+        ) > 0;
     }
 }

@@ -65,4 +65,6 @@ public interface FamilyService extends IService<FamilyDO>{
     PageResult<FamilyDO> getFamilyPage(FamilyPageReqVO pageReqVO);
 
     FamilyDO getFamilyByFamilyCode(String applyFamilyCode);
+
+    boolean updateFamilyCount(Integer familyId, int incr);
 }

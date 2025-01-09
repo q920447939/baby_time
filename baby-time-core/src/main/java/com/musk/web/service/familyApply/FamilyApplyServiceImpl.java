@@ -58,4 +58,11 @@ public class FamilyApplyServiceImpl extends ServiceImpl<FamilyApplyMapper, Famil
         return this.baseMapper.selectPage(pageReqBO);
     }
 
+    @Override
+    public boolean updateApplyStatus(Integer id, Integer applyStatus) {
+        FamilyApplyDO update = new FamilyApplyDO();
+        update.setApplyStatus(applyStatus);
+        update.setId(id);
+        return this.baseMapper.updateById(update) > 0 ;
+    }
 }

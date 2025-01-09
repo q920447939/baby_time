@@ -107,4 +107,15 @@ public class FamilyServiceImpl extends ServiceImpl<FamilyMapper, FamilyDO> imple
     public FamilyDO getFamilyByFamilyCode(String applyFamilyCode) {
         return familyMapper.selectOne(new LambdaQueryWrapperX<FamilyDO>().eq(FamilyDO::getFamilyCode,applyFamilyCode));
     }
+
+    @Override
+    @PluginLockSafeExec
+    public boolean updateFamilyCount(Integer familyId, int incr) {
+        FamilyDO familyDO = getFamily(familyId);
+
+        FamilyDO update = new FamilyDO();
+        update.setFamilyMemberCount(familyDO.getFamilyMemberCount() + incr);
+        update.setId(familyId);
+        return familyMapper.updateById(update) > 0;
+    }
 }

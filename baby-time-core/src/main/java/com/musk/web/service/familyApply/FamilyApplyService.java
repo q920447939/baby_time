@@ -60,4 +60,5 @@ public interface FamilyApplyService extends IService<FamilyApplyDO> {
      */
     PageResult<FamilyApplyDO> getFamilyApplyPage(FamilyApplyPageReqBO pageReqBO);
 
+    boolean updateApplyStatus(@Valid Integer id, Integer applyStatus);
 }

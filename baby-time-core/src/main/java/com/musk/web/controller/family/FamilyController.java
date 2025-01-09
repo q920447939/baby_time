@@ -3,8 +3,11 @@ package com.musk.web.controller.family;
 import cn.hutool.core.collection.CollUtil;
 import com.musk.web.FamilyConfig;
 import com.musk.web.controller.family.vo.FamilyPageReqVO;
+import com.musk.web.controller.family.vo.FamilyRelationRespVO;
 import com.musk.web.controller.family.vo.FamilyRespVO;
 import com.musk.web.controller.family.vo.FamilySaveReqVO;
+import com.musk.web.controller.uploadlist.vo.MemberSimpleMoreResVO;
+import com.musk.web.controller.uploadlist.vo.MemberSimpleResVO;
 import com.musk.web.dal.dataobject.family.FamilyDO;
 import com.musk.web.dal.dataobject.familyMemberRelation.FamilyMemberRelationDO;
 import com.musk.web.enums.role.RoleInfoEnums;
@@ -12,6 +15,8 @@ import com.musk.web.service.family.FamilyService;
 import com.musk.web.service.familyMemberRelation.FamilyMemberRelationService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.example.musk.auth.entity.member.MemberDO;
+import org.example.musk.auth.service.core.member.MemberService;
 import org.example.musk.common.context.ThreadLocalTenantContext;
 import org.example.musk.common.pojo.CommonResult;
 import org.example.musk.common.pojo.db.PageResult;
@@ -51,7 +56,7 @@ public class FamilyController {
 
 
     @Resource
-    private FamilyConfig familyConfig;
+    private MemberService memberService;
 
     /**
      * 创建家庭
@@ -119,5 +124,43 @@ public class FamilyController {
         return success(BeanUtils.toBean(pageResult, FamilyRespVO.class));
     }
 
+    /**
+     * 获得家庭分页
+     */
+    @GetMapping("/familyManager")
+    public CommonResult<List<FamilyRelationRespVO>> familyManager(@RequestParam("familyId") Integer familyId) {
+        List<FamilyMemberRelationDO> familyMemberRelationDOList = familyMemberRelationService.getFamilyMemberRelationByFamilyId(familyId);
+        return  CommonResultUtils.wrapEmptyObjResult(familyMemberRelationDOList,()->{
+            Map<Integer, FamilyMemberRelationDO> familyMemberRelationMap =
+                    familyMemberRelationDOList.stream().collect(Collectors.toMap(k -> k.getMemberId(), Function.identity()));
+            Map<Integer, MemberDO> memberIdMap =  memberService.getMemberInfoByMemberIdsToMap(new ArrayList<>(familyMemberRelationMap.keySet()));
+            List<FamilyRelationRespVO> resultList = new ArrayList<>(familyMemberRelationDOList.size());
+            for (FamilyMemberRelationDO familyMemberRelationDO : familyMemberRelationDOList) {
+                FamilyRelationRespVO familyRelationRespVO = new FamilyRelationRespVO();
+                familyRelationRespVO.setRoleId(familyMemberRelationDO.getRoleId());
+                familyRelationRespVO.setRoleName(RoleInfoEnums.getRoleInfoEnumsByRoleId(familyMemberRelationDO.getRoleId()).getDesc());
+                familyRelationRespVO.setApplyTime(familyMemberRelationDO.getCreateTime());
+                familyRelationRespVO.setMemberSimpleMoreResVO(BeanUtils.toBean(memberIdMap.get(familyMemberRelationDO.getMemberId()), MemberSimpleMoreResVO.class));
+                resultList.add(familyRelationRespVO);
+            }
+            return resultList;
+        });
+    }
+
+    /**
+     * 将用户移除家庭
+     */
+    @GetMapping("/removeFamilyMember")
+    public CommonResult<Boolean> removeFamilyMember(@RequestParam("familyId") Integer familyId,@RequestParam("memberId") Integer memberId) {
+        return success(familyMemberRelationService.removeFamilyMember(familyId,memberId));
+    }
+
+    /**
+     * 设置某个用户角色
+     */
+    @GetMapping("/setFamilyMemberRole")
+    public CommonResult<Boolean> setFamilyMemberRole(@RequestParam("familyId") Integer familyId,@RequestParam("memberId") Integer memberId,@RequestParam("roleId") Integer roleId) {
+        return success(familyMemberRelationService.setFamilyMemberRole(familyId,memberId,roleId));
+    }
 
 }

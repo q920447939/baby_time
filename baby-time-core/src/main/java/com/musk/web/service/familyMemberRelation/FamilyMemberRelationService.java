@@ -3,6 +3,7 @@ package com.musk.web.service.familyMemberRelation;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.musk.web.dal.dataobject.familyMemberRelation.FamilyMemberRelationDO;
 import com.musk.web.dal.dataobject.familyMemberRelation.bo.FamilyMemberRelationPageReqBO;
+import com.musk.web.enums.role.RoleInfoEnums;
 import jakarta.validation.*;
 import org.example.musk.common.pojo.db.PageResult;
 
@@ -52,4 +53,9 @@ public interface FamilyMemberRelationService extends IService<FamilyMemberRelati
 
     List<FamilyMemberRelationDO> getFamilyMemberRelationByMemberId(Integer memberId);
 
+    List<FamilyMemberRelationDO> getFamilyMemberRelationByFamilyId(Integer familyId);
+
+    boolean removeFamilyMember(Integer familyId, Integer memberId);
+
+    Boolean setFamilyMemberRole(Integer familyId, Integer memberId, Integer roleId);
 }
